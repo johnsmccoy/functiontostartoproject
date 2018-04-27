@@ -1,0 +1,111 @@
+startProject () {
+    mkdir src
+    mkdir dist
+    echo 'node_modules
+  .DS_Store
+  dist' >> .gitignore
+    cd src
+    echo '<!doctype html> 
+  <html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Nashville Software School</title>
+    <link rel="stylesheet" href="./styles/'$1'">
+  
+  </head>
+  
+  <body>
+    <nav></nav>
+  
+    <header></header>
+  
+    <article>
+      <header></header>
+      <section></section>
+      <footer></footer>
+    </article>
+  
+    <footer></footer>
+  
+    <script src="./bundle.js"></script>
+  </body>
+  </html>' >> index.html
+    mkdir styles
+    mkdir scripts
+    touch styles/$1
+    touch scripts/$2
+    echo '{
+      "parserOptions": {
+          "ecmaVersion": 6,
+          "sourceType": "module",
+          "ecmaFeatures": {
+              "jsx": true
+          }
+      },
+      "rules": {
+          "semi": 0,
+          "quotes": [
+              "error",
+              "double"
+          ],
+          "eqeqeq": 2,
+          "no-trailing-spaces": 2
+      }
+  }' >> .eslintrc
+    npm init
+    echo 'module.exports = function (grunt) {
+      // Project configuration.
+      grunt.initConfig({
+          pkg: grunt.file.readJSON("package.json"),
+          watch: {
+              scripts: {
+                  files: [
+                      "./scripts/**/*.js",
+                      "./styles/**/*.css",
+                      "./index.html",
+                      "!node_modules/**/*.js"
+                  ],
+                  tasks: ["eslint", "browserify", "copy"],
+                  options: {
+                      spawn: false,
+                  },
+              }
+          },
+          eslint: {
+              src: [
+                  "./scripts/**/*.js",
+                  "!node_modules/**/*.js"
+              ]
+          },
+          browserify: {
+              dist: {
+                  files: {
+                      "../dist/bundle.js": ["scripts/**/*.js"]
+                  }
+              }
+          },
+          copy: {
+              main: {
+                files: [
+                  // includes files within path
+                  {expand: true, src: ["index.html"], dest: "../dist", filter: "isFile"},
+                  {expand: true, src: ["styles/*.css"], dest: "../dist/", filter: "isFile"},
+                ],
+              },
+            },
+      });
+      // Load the plugin that provides the "uglify" task.
+      grunt.loadNpmTasks("grunt-contrib-watch");
+      grunt.loadNpmTasks("grunt-eslint");
+      grunt.loadNpmTasks("grunt-browserify");
+      grunt.loadNpmTasks("grunt-contrib-copy");
+      // Default task(s).
+      grunt.registerTask("default", ["eslint", "browserify", "copy", "watch"]);
+  };' >> Gruntfile.js
+  npm i grunt --save-dev
+  npm i grunt-browserify --save-dev
+  npm i grunt-contrib-copy --save-dev
+  npm i grunt-contrib-uglify-es --save-dev
+  npm i grunt-contrib-watch --save-dev
+  npm i grunt-eslint --save-dev
+  }

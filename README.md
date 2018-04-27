@@ -1,0 +1,1 @@
+//how to make a function to start project with grunt
